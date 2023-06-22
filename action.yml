@@ -135,6 +135,11 @@ inputs:
       Example: '["git", "docker.io", "nodejs"]'
     required: false
     default: '[]'
+  key-name:
+    description: >-
+      Assign SSH key-pair name to an instance.  This can be useful for SSHing into an instance for debugging.
+    required: false
+
 outputs:
   label:
     description: >-

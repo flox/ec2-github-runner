@@ -126,6 +126,7 @@ async function createEc2InstanceWithParams(imageId, subnetId, securityGroupId, l
     TagSpecifications: config.tagSpecifications,
     InstanceMarketOptions: buildMarketOptions(),
     MetadataOptions: Object.keys(config.input.metadataOptions).length > 0 ? config.input.metadataOptions : undefined,
+    KeyName: config.input.keyName || undefined,
   };
 
   if (config.input.ec2VolumeSize !== '' || config.input.ec2VolumeType !== '') {

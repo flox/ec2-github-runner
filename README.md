@@ -224,6 +224,7 @@ Now you're ready to go!
 | `ec2-volume-size` | Optional | Defines the size of the EC2 Volume in GB, will use the AWS default of 8 GB if not provided. |
 | `ec2-device-name` | Optional | Defines the device name used for the root volume. |
 | `ec2-volume-type` | Optional | Defines the device type used for the root volume. |
+| `key-name` | Optional | Assign SSH key-pair name to an instance.  This can be useful for SSHing into an instance for debugging. |
 
 ### Environment variables
 
@@ -286,6 +287,7 @@ jobs:
             [
               {"DeviceName": "/dev/sda1", "Ebs": {"VolumeSize": 100, "VolumeType": "gp3"}}
             ]
+          key-name: my-ssh-key # optional
   do-the-job:
     name: Do the job on the runner
     needs: start-runner # required to start the main job when the runner is ready
