@@ -2,6 +2,8 @@ const AWS = require('aws-sdk');
 const core = require('@actions/core');
 const config = require('./config');
 
+// https://github.com/actions/runner/releases
+
 // User data scripts are run as the root user
 function buildUserDataScript(githubRegistrationToken, label) {
   if (config.input.runnerHomeDir) {
@@ -23,8 +25,9 @@ function buildUserDataScript(githubRegistrationToken, label) {
       `echo "${config.input.preRunnerScript}" > pre-runner-script.sh`,
       'source pre-runner-script.sh',
       'case $(uname -m) in aarch64) ARCH="arm64" ;; amd64|x86_64) ARCH="x64" ;; esac && export RUNNER_ARCH=${ARCH}',
-      'curl -O -L https://github.com/actions/runner/releases/download/2.306.0/actions-runner-linux-${RUNNER_ARCH}-2.306.0.tar.gz',
-      'tar xzf ./actions-runner-linux-${RUNNER_ARCH}-2.306.0.tar.gz',
+      'export RUNNER_VERSION="2.309.0"',
+      'curl -O -L https://github.com/actions/runner/releases/download/${RUNNER_VERSION}/actions-runner-linux-${RUNNER_ARCH}-${RUNNER_VERSION}.tar.gz',
+      'tar xzf ./actions-runner-linux-${RUNNER_ARCH}-${RUNNER_VERSION}.tar.gz',
       'export RUNNER_ALLOW_RUNASROOT=1',
       `./config.sh --url https://github.com/${config.githubContext.owner}/${config.githubContext.repo} --token ${githubRegistrationToken} --labels ${label} --ephemeral`,
       './run.sh',
