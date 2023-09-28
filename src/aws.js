@@ -26,7 +26,7 @@ function buildUserDataScript(githubRegistrationToken, label) {
       'source pre-runner-script.sh',
       'case $(uname -m) in aarch64) ARCH="arm64" ;; amd64|x86_64) ARCH="x64" ;; esac && export RUNNER_ARCH=${ARCH}',
       'export RUNNER_VERSION="2.309.0"',
-      'curl -O -L https://github.com/actions/runner/releases/download/${RUNNER_VERSION}/actions-runner-linux-${RUNNER_ARCH}-${RUNNER_VERSION}.tar.gz',
+      'curl -O -L https://github.com/actions/runner/releases/download/v${RUNNER_VERSION}/actions-runner-linux-${RUNNER_ARCH}-${RUNNER_VERSION}.tar.gz',
       'tar xzf ./actions-runner-linux-${RUNNER_ARCH}-${RUNNER_VERSION}.tar.gz',
       'export RUNNER_ALLOW_RUNASROOT=1',
       `./config.sh --url https://github.com/${config.githubContext.owner}/${config.githubContext.repo} --token ${githubRegistrationToken} --labels ${label} --ephemeral`,
@@ -50,7 +50,18 @@ async function startEc2Instance(label, githubRegistrationToken) {
     SecurityGroupIds: [config.input.securityGroupId],
     IamInstanceProfile: { Name: config.input.iamRoleName },
     TagSpecifications: config.tagSpecifications,
+    BlockDeviceMappings: config.blockDeviceMappings,
   };
+
+  if (config.blockDeviceMappings !== null) {
+    params.BlockDeviceMappings = config.blockDeviceMappings;
+  }
+
+  if (config.input.keyName !== '') {
+    params.KeyName = config.input.keyName;
+  }
+
+  core.debug(`AWS EC2 runInstances params: ${JSON.stringify(params, null, 2)}`);
 
   try {
     const result = await ec2.runInstances(params).promise();

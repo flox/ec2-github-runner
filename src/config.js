@@ -15,6 +15,7 @@ class Config {
       iamRoleName: core.getInput('iam-role-name'),
       runnerHomeDir: core.getInput('runner-home-dir'),
       preRunnerScript: core.getInput('pre-runner-script'),
+      keyName: core.getInput('key-name'),
     };
 
     const tags = JSON.parse(core.getInput('aws-resource-tags'));
@@ -23,6 +24,11 @@ class Config {
       this.tagSpecifications = [{ResourceType: 'instance', Tags: tags}, {ResourceType: 'volume', Tags: tags}];
     }
 
+    const mappings = JSON.parse(core.getInput('block-device-mappings'));
+    this.blockDeviceMappings = null;
+    if (mappings.length > 0) {
+      this.blockDeviceMappings = mappings;
+    }
     // the values of github.context.repo.owner and github.context.repo.repo are taken from
     // the environment variable GITHUB_REPOSITORY specified in "owner/repo" format and
     // provided by the GitHub Action on the runtime
