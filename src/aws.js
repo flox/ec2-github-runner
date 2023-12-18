@@ -22,7 +22,7 @@ function buildUserDataScript(githubRegistrationToken, label) {
     return [
       '#!/bin/bash',
       'mkdir actions-runner && cd actions-runner',
-      `echo "${config.input.preRunnerScript}" > pre-runner-script.sh`,
+      `echo '${config.input.preRunnerScript}' > pre-runner-script.sh`,
       'source pre-runner-script.sh',
       'case $(uname -m) in aarch64) ARCH="arm64" ;; amd64|x86_64) ARCH="x64" ;; esac && export RUNNER_ARCH=${ARCH}',
       'export RUNNER_VERSION="2.309.0"',
