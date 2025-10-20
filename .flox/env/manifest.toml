@@ -1,0 +1,9 @@
+version = 1
+
+[install]
+nodejs.pkg-path = "nodejs_20"
+
+[hook]
+on-activate = """
+  npm install
+"""
