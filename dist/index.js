@@ -145023,7 +145023,7 @@ function buildRunCommands(githubRegistrationToken, label) {
       `cd "${config.input.runnerHomeDir}"`,
       'source /tmp/pre-runner-script.sh',
       'export RUNNER_ALLOW_RUNASROOT=1',
-      `./config.sh --url https://github.com/${config.githubContext.owner}/${config.githubContext.repo} --token ${githubRegistrationToken} --labels ${label}`,
+      `./config.sh --url https://github.com/${config.githubContext.owner}/${config.githubContext.repo} --token ${githubRegistrationToken} --labels ${label} --ephemeral`,
     ];
   } else {
     userData = [
@@ -145036,7 +145036,7 @@ function buildRunCommands(githubRegistrationToken, label) {
       'curl -O -L https://github.com/actions/runner/releases/download/v${RUNNER_VERSION}/actions-runner-linux-${RUNNER_ARCH}-${RUNNER_VERSION}.tar.gz',
       'tar xzf ./actions-runner-linux-${RUNNER_ARCH}-${RUNNER_VERSION}.tar.gz',
       'export RUNNER_ALLOW_RUNASROOT=1',
-      `./config.sh --url https://github.com/${config.githubContext.owner}/${config.githubContext.repo} --token ${githubRegistrationToken} --labels ${label}`,
+      `./config.sh --url https://github.com/${config.githubContext.owner}/${config.githubContext.repo} --token ${githubRegistrationToken} --labels ${label} --ephemeral`,
     ];
   }
   if (config.input.runAsUser) {
@@ -145134,6 +145134,7 @@ async function createEc2InstanceWithParams(imageId, subnetId, securityGroupId, l
     TagSpecifications: config.tagSpecifications,
     InstanceMarketOptions: buildMarketOptions(),
     MetadataOptions: Object.keys(config.input.metadataOptions).length > 0 ? config.input.metadataOptions : undefined,
+    KeyName: config.input.keyName || undefined,
   };
 
   if (config.input.ec2VolumeSize !== '' || config.input.ec2VolumeType !== '') {
@@ -145287,6 +145288,7 @@ class Config {
       availabilityZonesConfig: core.getInput('availability-zones-config'),
       metadataOptions: JSON.parse(core.getInput('metadata-options') || '{}'),
       packages: JSON.parse(core.getInput('packages') || '[]'),
+      keyName: core.getInput('key-name'),
     };
 
     // Get the AWS_REGION environment variable
@@ -147503,8 +147505,8 @@ async function start() {
 }
 
 async function stop() {
-  await aws.terminateEc2Instance();
   await gh.removeRunner();
+  await aws.terminateEc2Instance();
 }
 
 (async function () {
